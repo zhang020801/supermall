@@ -10,8 +10,8 @@
       <home-swiper :banners="banners"></home-swiper>
       <recommend-view :recommends="recommends"></recommend-view>
       <feature-view></feature-view>
-      <tab-control class="tab-control"
-                   :titles="['流行','新款','精选']"@tabClick="tabClick"></tab-control>
+      <tab-control :titles="['流行','新款','精选']"
+                   @tabClick="tabClick" ref="tabControl"></tab-control>
       <goods-list :goods="showGoods"></goods-list>
     </scroll>
 
@@ -57,7 +57,8 @@
           'sell':{page:0,list:[]},
         },
         currentType: 'pop',
-        isShowBackTop: true
+        isShowBackTop: true,
+        tabOffsetTop: 0
       }
     },
     computed:{
@@ -66,17 +67,36 @@
       }
     },
     created() {
-
+      //1 请求多个数据
       this.getHomeMultidata()
-
+      //2 请求商品数据
       this.getHomeGoods('pop');
       this.getHomeGoods('new');
       this.getHomeGoods('sell');
+    },
+    mounted() {
+      const refresh= this.debounce(this.$refs.scroll.refresh)
+      //3 监听item中图片加载完成
+      this.$bus.$on('itemImageLoad',() => {
+        refresh()
+      })
+
+      this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
     },
     methods:{
       /**
        * 事件监听
        */
+      debounce(func, delay){
+        let timer = null
+        return function (...args) {
+          if (timer) clearTimeout(timer)
+          timer = setTimeout(() => {
+            func.apply(this,args)
+          },delay)
+        }
+      },
+
       tabClick(index){
         switch (index) {
           case 0:
@@ -143,11 +163,6 @@
     left: 0;
     right: 0;
     top: 0;
-    z-index: 9;
-  }
-  .tab-control{
-    position: sticky;
-    top: 44px;
     z-index: 9;
   }
 
