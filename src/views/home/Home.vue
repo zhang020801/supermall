@@ -61,7 +61,7 @@
           'sell':{page:0,list:[]},
         },
         currentType: 'pop',
-        isShowBackTop: true,
+        isShowBackTop: false,
         tabOffsetTop: 0,
         isTabFixed: false,
         saveY: 0
@@ -75,13 +75,13 @@
     // activated() {
     //   this.$refs.scroll.refresh()
     // },
-    // activated(){
-    //   this.$refs.scroll.refresh()
-    //   this.$refs.scroll.scrollTo(0, this.saveY,0)
-    // },
-    // deactivated(){
-    //   this.saveY = this.$refs.scroll.getScrollY()
-    // },
+    activated(){
+      this.$refs.scroll.refresh()
+      this.$refs.scroll.scrollTo(0, this.saveY,0)
+    },
+    deactivated(){
+      this.saveY = this.$refs.scroll.getScrollY()
+    },
     created() {
       //1 请求多个数据
       this.getHomeMultidata()
@@ -128,7 +128,9 @@
         this.$refs.tabControl2.currentIndex = index;
       },
       backClick(){
+        // console.log(this.$refs.scroll)
         this.$refs.scroll.scrollTo(0,0,500)
+
       },
       contentScroll(position){
         // console.log(position);

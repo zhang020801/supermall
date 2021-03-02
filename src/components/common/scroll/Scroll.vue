@@ -24,14 +24,15 @@
     },
     data(){
       return{
-        scroll:null
+        scroll: null
       }
     },
     mounted() {
       //1 创建BScroll对象
-      this.scroll = new BScroll(this.$refs.wrapper,{
-        click: true,
+      if (!this.$refs.wrapper) return
+      this.scroll = new BScroll(this.$refs.wrapper, {
         probeType: this.probeType,
+        click: true,
         pullUpLoad: this.pullUpLoad
       })
       //2 监听滚动位置
@@ -43,17 +44,18 @@
       this.scroll.on('pullingUp',() => {
         this.$emit('pullingUp')
       })
+
     },
 
     methods:{
+      refresh(){
+        this.scroll && this.scroll.refresh && this.scroll.refresh()
+      },
       scrollTo(x, y, time=300){
-        this.scroll && this.scroll.scrollTo() && this.scroll.scrollTo(x, y, time)
+        this.scroll && this.scroll.scrollTo(x * 1, y *1, time)
       },
       finishPullUp(){
-        this.scroll.finishPullUp()
-      },
-      refresh(){
-        this.scroll && this.scroll.refresh()
+        this.scroll && this.scroll.finishPullUp()
       },
       getScrollY(){
         return this.scroll ? this.scroll.y : 0
